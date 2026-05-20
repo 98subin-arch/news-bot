@@ -14,10 +14,11 @@ RSS_FEEDS = {
     "뉴시스 금융": "https://www.newsis.com/RSS/bank.xml",
     "뉴시스 산업": "https://www.newsis.com/RSS/industry.xml",
     "연합뉴스 경제": "https://www.yna.co.kr/rss/economy.xml",
+    "연합뉴스 산업": "https://www.yna.co.kr/rss/industry.xml",
     "매일경제": "https://www.mk.co.kr/rss/30000001/",
 }
 
-ITEMS_PER_FEED = 5  # 언론사당 가져올 기사 수
+ITEMS_PER_FEED = 10  # 언론사당 가져올 기사 수
 
 # ===============================
 
