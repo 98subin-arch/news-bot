@@ -1,15 +1,16 @@
-name: 매일 경제 뉴스 발송
+name: 매일 경제 뉴스 업데이트
 
-# 한국시간 매일 06:00에 자동 실행
+# 한국시간 매일 06:00 자동 실행
 on:
   schedule:
-    # cron 표현식: '분 시 일 월 요일'
-    # 한국시간 06:00 = UTC 21:00 (전날)
-    - cron: '0 21 * * *'
-  workflow_dispatch:  # GitHub 웹에서 수동 실행 버튼 활성화
+    - cron: '0 21 * * *'  # UTC 21:00 = KST 06:00
+  workflow_dispatch:  # 수동 실행 버튼
+
+permissions:
+  contents: write  # index.html 자동 커밋을 위해 필수
 
 jobs:
-  send-news:
+  update-news:
     runs-on: ubuntu-latest
     steps:
       - name: 코드 체크아웃
@@ -23,11 +24,13 @@ jobs:
       - name: 의존성 패키지 설치
         run: pip install -r requirements.txt
 
-      - name: 뉴스 메일 발송
-        env:
-          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
-          SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
-          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
-          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      - name: 뉴스 HTML 생성
         run: python news.py
+
+      - name: 변경사항 자동 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet || git commit -m "Update news $(TZ='Asia/Seoul' date +'%Y-%m-%d %H:%M KST')"
+          git push
